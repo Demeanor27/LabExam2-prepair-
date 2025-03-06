@@ -10,7 +10,7 @@
   - เตรียมคอมพิวเตอร์ของคุณให้พร้อมสำหรับการแสดงผลลัพธ์ของทุกข้อ
   - มาถึงห้องสอบก่อนเวลาสอบ **5 นาที**
   - หลังจากครบ 15 นาที คุณต้องออกจากห้องสอบ
-
+----
 ## **คู่มือการทำข้อสอบทีละขั้นตอน**
 
 ### **1. สร้าง Virtual Machine (EC2) บน AWS**
@@ -39,14 +39,14 @@ ssh -i your-key.pem ubuntu@your-ec2-public-ip
 ```sh
 sudo apt update && sudo apt upgrade -y
 ```
-
+----
 ### **2. ติดตั้ง Nginx และแสดงหน้าเว็บเริ่มต้น**
 ```sh
 sudo apt install nginx -y
 systemctl status nginx
 curl localhost
 ```
-
+----
 ### **3. แก้ไข HTML เพื่อแสดง index.html ใหม่ใน Nginx**
 ```sh
 sudo nano /var/www/html/index.html
@@ -67,21 +67,21 @@ sudo nano /var/www/html/index.html
 ```sh
 sudo systemctl restart nginx
 ```
-
+----
 ### **4. ติดตั้ง Docker และรัน Hello-World**
 ```sh
 sudo apt install docker.io -y
 docker --version
 docker run hello-world
 ```
-
+----
 ### **5. รัน Docker Image ของ Nginx และแสดงหน้าเว็บเริ่มต้น**
 ```sh
 docker pull nginx
 docker run -d -p 80:80 nginx
 curl localhost
 ```
-
+----
 ### **6. สร้างอิมเมจใหม่ที่มีไฟล์ HTML และรันคอนเทนเนอร์**
 ```sh
 nano Dockerfile
@@ -96,27 +96,27 @@ COPY index.html /usr/share/nginx/html/index.html
 docker build -t custom-nginx .
 docker run -d -p 80:80 custom-nginx
 ```
-
+----
 ### **7. Push อิมเมจไปยัง Docker Hub**
 ```sh
 docker login
 docker tag custom-nginx <your-dockerhub-username>/custom-nginx
 docker push <your-dockerhub-username>/custom-nginx
 ```
-
+----
 ### **8. แมป Volume ของคอนเทนเนอร์ให้แสดงไฟล์ HTML จากข้อ 3**
 ```sh
 docker run -d -p 80:80 -v /var/www/html/index.html:/usr/share/nginx/html/index.html custom-nginx
 curl localhost
 ```
-
+----
 ### **9. รัน docker-compose.yml ที่ได้รับจากอาจารย์ และแสดงผลในเบราว์เซอร์**
 ```sh
 scp docker-compose.yml ubuntu@<EC2-Public-IP>:~
 docker-compose up -d
 curl localhost
 ```
-
+----
 ### **10. สร้างไฟล์ HTML ใหม่ใน EC2 และเขียน docker-compose.yml**
 ```sh
 nano index.html
