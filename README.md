@@ -79,6 +79,16 @@ sudo apt install docker.io -y
 docker --version
 docker run hello-world
 ```
+```sh
+sudo usermod -aG docker $USER
+```
+```sh
+newgrp docker
+```
+```sh
+docker run hello-world
+```
+
 ----
 ### **5. รัน Docker Image ของ Nginx และแสดงหน้าเว็บเริ่มต้น**
 ```sh
