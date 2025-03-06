@@ -28,6 +28,11 @@
 8. คลิก **Launch Instance** และรอให้สถานะเป็น `Running`
 9. คัดลอก **Public IPv4** ของ EC2
 
+ใช้นี้ก่อนกันไม่ได้
+```
+    chmod 400 your-key.pem
+```
+
 #### **1.2 เชื่อมต่อไปยัง EC2 ผ่าน SSH**
 ```sh
 ssh -i your-key.pem ubuntu@your-ec2-public-ip
