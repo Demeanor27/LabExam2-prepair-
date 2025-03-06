@@ -11,17 +11,33 @@
   - มาถึงห้องสอบก่อนเวลาสอบ **5 นาที**
   - หลังจากครบ 15 นาที คุณต้องออกจากห้องสอบ
 
-## **คู่มือการทำข้อสอบทีละขั้นตอน (macOS + AWS EC2)**
+## **1. สร้าง Virtual Machine (EC2) บน AWS**
+### **1.1 สร้าง EC2 Instance บน AWS**
+1. เข้าไปที่ [AWS EC2 Console](https://aws.amazon.com/) และเลือก **Launch Instance**
+2. ตั้งชื่อ **Instance Name** เช่น `my-ec2-vm`
+3. **เลือก Amazon Machine Image (AMI)**: 
+   - `Ubuntu 22.04 LTS` (หรือ `Ubuntu 20.04 LTS`)
+4. **เลือก Instance Type**: 
+   - `t2.micro` (ถ้าใช้ Free Tier)
+5. **สร้างและเลือก Key Pair**: 
+   - คลิก **Create new key pair** ตั้งชื่อ และดาวน์โหลดไฟล์ `.pem`
+6. **ตั้งค่า Security Group**: 
+   - เปิด **Inbound Rules** ให้รองรับ `SSH (22)`, `HTTP (80)`, `Custom TCP (8080)`
+7. คลิก **Launch Instance** และรอให้สถานะเป็น `Running`
+8. คัดลอก **Public IPv4** ของ EC2 เพื่อใช้ SSH
 
-### **1. สร้าง Virtual Machine (EC2) บน AWS**
+### **1.2 เชื่อมต่อไปยัง EC2 ผ่าน SSH จาก macOS**
 ```sh
+chmod 400 TestLab.pem  # ปรับสิทธิ์ของ Key Pair
 ssh -i "TestLab.pem" ubuntu@<EC2-Public-IP>
 ```
+
+### **1.3 อัปเดตแพ็กเกจใน EC2**
 ```sh
 sudo apt update && sudo apt upgrade -y
 ```
 
-### **2. ติดตั้ง Nginx และแสดงหน้าเว็บเริ่มต้น**
+## **2. ติดตั้ง Nginx และแสดงหน้าเว็บเริ่มต้น**
 ```sh
 sudo apt install nginx -y
 sudo systemctl start nginx
@@ -29,7 +45,7 @@ sudo systemctl enable nginx
 curl localhost
 ```
 
-### **3. แก้ไข HTML เพื่อแสดง index.html ใหม่ใน Nginx**
+## **3. แก้ไข HTML เพื่อแสดง index.html ใหม่ใน Nginx**
 ```sh
 sudo nano /var/www/html/index.nginx-debian.html
 ```
@@ -38,7 +54,7 @@ sudo nano /var/www/html/index.nginx-debian.html
 sudo systemctl reload nginx
 ```
 
-### **4. ติดตั้ง Docker และรัน Hello-World**
+## **4. ติดตั้ง Docker และรัน Hello-World**
 ```sh
 sudo apt install docker.io -y
 sudo systemctl start docker
@@ -48,13 +64,13 @@ newgrp docker
 docker run hello-world
 ```
 
-### **5. รัน Docker Image ของ Nginx และแสดงหน้าเว็บเริ่มต้น**
+## **5. รัน Docker Image ของ Nginx และแสดงหน้าเว็บเริ่มต้น**
 ```sh
 docker run -d -p 81:80 nginx
 curl localhost:81
 ```
 
-### **6. รับไฟล์ HTML จากอาจารย์ สร้างอิมเมจใหม่ และรันคอนเทนเนอร์**
+## **6. รับไฟล์ HTML จากอาจารย์ สร้างอิมเมจใหม่ และรันคอนเทนเนอร์**
 ```sh
 nano custom.html
 ```
@@ -74,20 +90,20 @@ docker run -d -p 82:80 my-nginx-image
 curl localhost:82
 ```
 
-### **7. Push อิมเมจไปยัง Docker Hub**
+## **7. Push อิมเมจไปยัง Docker Hub**
 ```sh
 docker login
 docker tag my-nginx-image <your-dockerhub-username>/my-nginx-image:latest
 docker push <your-dockerhub-username>/my-nginx-image:latest
 ```
 
-### **8. แมป Volume ของคอนเทนเนอร์ให้แสดงไฟล์ HTML จากข้อ 3**
+## **8. แมป Volume ของคอนเทนเนอร์ให้แสดงไฟล์ HTML จากข้อ 3**
 ```sh
 docker run -d -p 83:80 -v /var/www/html:/usr/share/nginx/html nginx
 curl localhost:83
 ```
 
-### **9. รัน docker-compose.yml ที่ได้รับจากอาจารย์ และแสดงผลในเบราว์เซอร์**
+## **9. รัน docker-compose.yml ที่ได้รับจากอาจารย์ และแสดงผลในเบราว์เซอร์**
 ```sh
 nano docker-compose.yml
 ```
@@ -129,7 +145,7 @@ docker-compose up -d
 curl localhost:84
 ```
 
-### **10. สร้างไฟล์ HTML ใหม่ และเขียน docker-compose.yml**
+## **10. สร้างไฟล์ HTML ใหม่ และเขียน docker-compose.yml**
 ```sh
 mkdir ~/question10
 cd ~/question10
